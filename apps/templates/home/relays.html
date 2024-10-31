@@ -1,0 +1,490 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block stylesheets %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" />
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=menu" />
+<style>
+    .material-symbols-outlined {
+        font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+    }
+</style>
+
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -10px;
+        margin-left: 0;
+    }
+
+    .list-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .list-items .item {
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .list-items .item .check-icon {
+        margin-right: 8px;
+    }
+
+    .list-items .item.selected {
+        background-color: #e0e0e0;
+        color: #ff0000;
+    }
+
+    .relays-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 40px;
+        padding: 30px;
+    }
+
+    .relay {
+        width: 250px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding-top: 20px;
+        padding-right: 15px;
+        padding-bottom: 5px;
+        padding-left: 8px;
+        position: relative;
+        text-align: right;
+    }
+
+    .relay-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .card-icon {
+        width: 80px;
+        height: 80px;
+        background-color: #6ec0e6;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 15px;
+        top: -20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-icon i {
+        font-size: 40px;
+        color: white;
+    }
+
+    .card-icon img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .relay-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-left: auto;
+    }
+
+    .relay-status {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin: 0px 0;
+    }
+
+    .status {
+        font-size: 16px;
+        font-weight: bold;
+        color: #999;
+        margin-right: 10px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+    .switch input {
+        display: none;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        border-radius: 34px;
+        transition: 0.4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.4s;
+    }
+
+    input:checked+.slider {
+        background-color: #e91e1e;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(20px);
+    }
+
+    .relay-middle {
+        font-size: 12px;
+        color: #333;
+        text-align: right;
+    }
+
+    .relay-footer {
+        font-size: 12px;
+        color: #9c27b0;
+        text-align: left;
+        margin-top: 5px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+
+    .main-panel>.content {
+        margin-top: 40px;
+        /* Khoảng cách từ trên xuống */
+        padding: 30px 15px;
+        /* Khoảng cách bên trong */
+        min-height: calc(100vh - 123px);
+        /* Chiều cao tối thiểu */
+        background-color: #f5f5f5;
+        /* Màu nền cho toàn bộ panel */
+    }
+
+    .relay-card {
+        width: 250px;
+        /* Đặt chiều rộng cho card */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .relay-footer {
+        display: flex;
+        /* Sử dụng flex để chia thành 2 cột */
+        align-items: center;
+        /* Canh giữa các phần tử theo chiều dọc */
+        justify-content: space-between;
+        /* Căn đều giữa 2 cột */
+        margin-top: auto;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+    }
+
+    /* Cột 1: Thông tin thời gian */
+    .time-info {
+        flex: 1;
+        /* Chiếm toàn bộ không gian cột 1 */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        /* Căn đều 2 dòng thời gian */
+    }
+
+    /* Cột 2: Nút Edit */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Canh giữa nút edit theo chiều dọc */
+        height: 100%;
+        /* Chiều cao bằng toàn bộ chiều cao của cột */
+        margin-left: 10px;
+        /* Khoảng cách giữa 2 cột */
+    }
+
+    .edit-btn {
+        color: #e07e22;
+        font-size: 24px;
+        /* Kích thước biểu tượng */
+        text-decoration: none;
+    }
+
+    .edit-btn:hover {
+        color: #e07e227f;
+        cursor: pointer;
+    }
+
+    .api-key-button {
+        background-color: #5a9be1;
+        border: none;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: default;
+        text-align: center;
+        display: inline-block;
+        user-select: text;
+        pointer-events: none;
+        border-radius: 0.375rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        font-weight: 500;
+    }
+
+    .api-key-button:hover {
+        background-color: rgba(0, 87, 179, 0.918);
+        text-decoration: none;
+    }
+
+    /* Căn chỉnh tổng thể cho modal */
+    .modal-content {
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .modal-header {
+        border-bottom: none;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .modal-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .modal-body {
+        padding: 15px 20px;
+    }
+
+    .modal-footer {
+        border-top: none;
+        padding: 10px 20px;
+    }
+
+    /* Định dạng nhãn (label) */
+    .form-label {
+        font-size: 16px;
+        font-weight: 600;
+        color: #666;
+        margin-bottom: 5px;
+        /* Giảm khoảng cách giữa nhãn và input */
+        display: block;
+    }
+
+    /* Định dạng các input, select */
+    .form-control,
+    .form-select {
+        width: 100%;
+        border-radius: 8px;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+        outline: none;
+        /* Loại bỏ outline mặc định khi focus */
+    }
+
+    /* Loại bỏ box-shadow và outline khi focus */
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #6c63ff;
+        box-shadow: none;
+        /* Loại bỏ box-shadow */
+        outline: none;
+        /* Loại bỏ outline */
+    }
+
+    /* Khoảng cách giữa các trường */
+    .mb-3 {
+        margin-bottom: 10px !important;
+        /* Giảm khoảng cách giữa các trường */
+    }
+
+    /* Khoảng cách giữa các option trong select */
+    .form-select option {
+        padding: 8px;
+    }
+
+    .edit-btn i,
+    .delete-btn i {
+        font-size: 20px;
+    }
+
+    .form-control,
+    .is-focused .form-control {
+        background-image: none;
+    }
+
+    .form-control:invalid {
+        background-image: none;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div id="relays-container" class="relays-container">
+    {% for relay in relays %}
+    <div id="relay-{{ relay.id }}" class="relay" data-relay-pin="{{ relay.pin }}" data-apikey="{{ api_key }}">
+        <div class="relay-header">
+            <div class="card-icon">
+                {% if relay.type == 1 %}
+                <i class="material-icons">content_copy</i>
+                {% elif relay.type == 3 %}
+                <i class="material-symbols-outlined">valve</i>
+                {% endif %}
+            </div>
+
+            <div class="relay-name">{{ relay.name }}</div>
+        </div>
+        <div class="relay-status">
+            <span class="status">{% if relay.value == "1" %}On{% else %}Off{% endif %}</span>
+            <label class="switch">
+                <input type="checkbox" id="switch-{{ relay.id }}" {% if relay.value == "1" %}checked{% endif %}>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="relay-middle">
+            <div>&nbsp;</div>
+            <div>&nbsp;</div>
+        </div>
+        <div class="relay-footer">
+            <div class="time-info">
+                <div>Thời gian bật: {{ relay.last_on|date:"H:i d/m/Y" }}</div>
+                <div>Thời gian tắt: {{ relay.last_off|date:"H:i d/m/Y" }}</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken'); 
+
+        
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            const options = {
+                hour: '2-digit',
+                minute: '2-digit',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            };
+            return date.toLocaleString('vi-VN', options); 
+        }
+
+      
+        function toggleRelay(relayId, relayPin, apiKey) {
+            const relayCheckbox = document.getElementById('switch-' + relayId);
+            const value = relayCheckbox.checked ? 1 : 0;
+            const url = `${window.location.protocol}//${window.location.host}/device/update-value/${relayPin}/${apiKey}/`;
+
+            fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken  
+                },
+                body: JSON.stringify({ value: value }),
+                credentials: 'same-origin'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+
+                    
+                    $('#relay-' + relayId).find('.status').text(value === 1 ? 'On' : 'Off');
+
+                  
+                    $('#relay-' + relayId).find('.time-info').html(`
+        Thời gian bật: ${data.last_on ? formatDateTime(data.last_on) : 'Không có dữ liệu'} <br>
+        Thời gian tắt: ${data.last_off ? formatDateTime(data.last_off) : 'Không có dữ liệu'}
+      `);
+                })
+                .catch(error => {
+                    relayCheckbox.checked = !relayCheckbox.checked;  // Reset công tắc nếu có lỗi
+                });
+        }
+
+       
+        $('#relays-container').on('change', '.switch input', function () {
+            const relayId = $(this).attr('id').split('-')[1];
+            const relayPin = $(`#relay-${relayId}`).data('relay-pin');
+            const apiKey = $(`#relay-${relayId}`).data('apikey');
+
+            toggleRelay(relayId, relayPin, apiKey);
+        });
+    });
+
+
+</script>
+
+{% endblock javascripts %}

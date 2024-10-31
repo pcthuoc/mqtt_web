@@ -1,0 +1,101 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+  .main-panel > .content {
+    margin-top: 40px; /* Khoảng cách từ trên xuống */
+    padding: 30px 15px; /* Khoảng cách bên trong */
+    min-height: calc(100vh - 123px); /* Chiều cao tối thiểu */
+    background-color: #f5f5f5; /* Màu nền cho toàn bộ panel */
+}
+
+</style>{% endblock stylesheets %}
+
+{% block content %}
+<div class="row" id="sensors">
+  {% for sensor in sensors %}
+    <div class="col-lg-3 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-header card-header-info card-header-icon">
+          <div class="card-header card-header-warning card-header-icon"></div>
+          <div class="card-icon">
+            <i class="material-icons">sensors</i> <!-- Bạn có thể thay đổi biểu tượng phù hợp -->
+          </div>
+          <h2 class="card-category">{{ sensor.name }}</h2>
+          
+          <h3 class="card-title">{{ sensor.value }}
+            <small>{{ sensor.unit }}</small>
+          </h3>
+        </div>
+        <div class="card-footer">
+          <div class="stats">
+            <i class="material-icons text-danger">date_range</i>
+            <a href="#pablo">Cập nhật: {{ sensor.last_off|date:"H:i d/m/Y" }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if forloop.counter|divisibleby:4 %}
+      </div><div class="row"> <!-- Đóng và mở lại div.row để tạo hàng mới sau mỗi 4 cảm biến -->
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+  const ws = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
+
+  ws.onopen = () => {
+      // console.log('Kết nối WebSocket đã được thiết lập');
+  };
+  ws.onerror = (error) => {
+      // console.error('Lỗi WebSocket: ', error);
+  };
+  ws.onclose = () => {
+      // console.log('Kết nối WebSocket đã bị đóng');
+  };
+  ws.onmessage = (event) => {
+      // console.log('Nhận tin từ WebSocket');
+      loadData();
+  };
+
+  function loadData() {
+    $.ajax({
+      url: "{% url 'sensors' %}", // Đảm bảo đường dẫn URL là chính xác
+      method: 'GET',
+      success: function (data) {
+
+        // Sử dụng jQuery để cập nhật phần tử
+        const $data = $(data);
+        const newSensorsHtml = $data.find('#sensors').html();
+        $('#sensors').html(newSensorsHtml);
+
+        // Cập nhật thông tin cảm biến
+        $data.find('.card').each(function() {
+          const sensorId = $(this).data('sensor-id');
+          const newValue = $(this).find('.card-title').text().trim();
+          const newLastUpdate = $(this).find('.stats a').text().trim();
+
+          // Cập nhật giá trị và thời gian cập nhật cho từng cảm biến
+          $(`#sensors .card[data-sensor-id="${sensorId}"]`).each(function() {
+            $(this).find('.card-title').html(newValue);
+            $(this).find('.stats a').html(newLastUpdate);
+          });
+        });
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error('Yêu cầu AJAX thất bại:', textStatus, errorThrown);
+      }
+    });
+  }
+
+</script>
+
+{% endblock javascripts %}
