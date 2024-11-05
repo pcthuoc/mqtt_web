@@ -2,7 +2,7 @@
   <div class="logo">
     <a target="_blank" rel="noopener noreferrer" href="https://appseed.us/admin-dashboards/django-dashboard-material"
       class="simple-text logo-normal">
-      Django Material
+      IOT
     </a>
   </div>
   <div class="sidebar-wrapper">
@@ -17,30 +17,42 @@
       </li>
       <li class="nav-item {% if 'relay' in segment %} active {% endif %}">
         <a class="nav-link" href="/relays">
-          <i class="material-icons">library_books</i>
+          <i class="material-symbols-outlined">switch</i>
           <p>Công Tắc </p>
         </a>
       </li>
       <li class="nav-item {% if 'sensor' in segment %} active {% endif %}">
         <a class="nav-link" href="/sensors">
-          <i class="material-icons">bubble_chart</i>
+          <i class="material-symbols-outlined">sensors</i>
           <p>Cảm biến</p>
+        </a>
+      </li>
+      <li class="nav-item {% if 'chart' in segment %} active {% endif %}">
+        <a class="nav-link" href="/chart">
+          <i class="material-symbols-outlined">monitoring</i>
+          <p>Biểu đồ</p>
+        </a>
+      </li>
+      <li class="nav-item {% if 'timer' in segment %} active {% endif %}">
+        <a class="nav-link" href="/timer">
+          <i class="material-symbols-outlined">pending_actions</i>
+          <p>Hẹn giờ</p>
         </a>
       </li>
       <li class="nav-item {% if 'user' in segment %} active {% endif %}">
         <a class="nav-link" href="/users">
-          <i class="material-icons">person</i>
-          <p>User</p>
+          <i class="material-symbols-outlined">contacts</i>
+          <p>Quản lý người dùng</p>
         </a>
       </li>
 
       <li class="nav-item {% if 'devices' in segment %} active {% endif %}">
         <a class="nav-link" href="/devices">
-          <i class="material-icons">person</i>
-          <p>Thiet bij</p>
+          <i class="material-symbols-outlined">gamepad</i>
+          <p>Quản lý thiết bị</p>
         </a>
       </li>
-      <li class="nav-item {% if 'page-user' in segment %} active {% endif %}">
+      <!-- <li class="nav-item {% if 'page-user' in segment %} active {% endif %}">
         <a class="nav-link" href="/page-user.html">
           <i class="material-icons">person</i>
           <p>User Profile</p>
@@ -51,8 +63,8 @@
           <i class="material-icons">content_paste</i>
           <p>Table List</p>
         </a>
-      </li>
-      <li class="nav-item {% if 'ui-typography' in segment %} active {% endif %}">
+      </li> -->
+      <!-- <li class="nav-item {% if 'ui-typography' in segment %} active {% endif %}">
         <a class="nav-link" href="/ui-typography.html">
           <i class="material-icons">library_books</i>
           <p>Typography</p>
@@ -82,7 +94,7 @@
           <i class="material-icons">language</i>
           <p>RTL Support</p>
         </a>
-      </li>
+      </li> -->
 
       <li class="nav-item ">
         <a class="nav-link" href="{% url 'logout' %}">
@@ -91,23 +103,9 @@
         </a>
       </li>
 
-      <li class="nav-item active-pro ">
-        <a class="nav-link" target="_blank" rel="noopener noreferrer"
-          href="https://appseed.us/admin-dashboards/django-dashboard-material-pro">
-          <i class="material-icons">unarchive</i>
-          <p>PRO Version</p>
-        </a>
-      </li>
+
 
       {% else %}
-
-      <li class="nav-item active">
-        <a class="nav-link" target="_blank" rel="noopener noreferrer"
-          href="https://appseed.us/admin-dashboards/django-dashboard-material-pro">
-          <i class="material-icons">unarchive</i>
-          <p>PRO Version</p>
-        </a>
-      </li>
 
       {% endif %}
     </ul>

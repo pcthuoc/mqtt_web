@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
+from timer.models import Timer
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
@@ -41,3 +41,27 @@ class SignUpForm(forms.ModelForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError("Email đã được sử dụng.")
         return email
+
+
+class TimerForm(forms.ModelForm):
+    class Meta:
+        model = Timer
+        fields = ['device', 'days_of_week', 'start_time', 'end_time', 'is_active']
+        widgets = {
+            'days_of_week': forms.CheckboxSelectMultiple(),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+        labels = {
+            'device': 'Thiết bị',
+            'days_of_week': 'Lặp lại vào các ngày',
+            'start_time': 'Giờ bật',
+            'end_time': 'Giờ tắt',
+            'is_active': 'Trạng thái kích hoạt',
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get("start_time")
+        end_time = cleaned_data.get("end_time")
+        return cleaned_data

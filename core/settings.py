@@ -6,14 +6,22 @@ Copyright (c) 2019 - present AppSeed.us
 import os
 from decouple import config
 from unipath import Path
+from celery.schedules import crontab
+from celery.schedules import schedule
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+DEBUG = True
 # settings.py
 EMQX_API_KEY = "bff127dc0b5cbe2a"
 EMQX_SECRET_KEY = "NWG9B9A9CLTm8y89CwYIYpFNdYM2NhTYX2LNHIzYaCG77TN"
+MQTT_BROKER_HOST = '165.232.166.11'
+MQTT_BROKER_PORT = 1883  # Cổng TCP
+MQTT_TOPIC = 'API/#'     # Subscribe vào tất cả các topic dưới 'API/'
+MQTT_USERNAME = 'pcthuochh'
+MQTT_PASSWORD = 'thuocadmin'
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -33,17 +41,33 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'import_export',
+    'channels',
+    'django_celery_beat',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'apps.home',  # Enable the inner home (home)
     'api_key',
     'devices',
-    'data'
+    'data',
+    'timer',
+     'mqtt',
+     'logs'
+    
 
 ]
 
+ASGI_APPLICATION = 'core.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -106,6 +130,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# settings.py
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 LANGUAGE_CODE = 'en-us'
@@ -138,6 +180,31 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+# CELERY_BEAT_SCHEDULE = {
+#     'check-timers-every-minute': {
+#         'task': 'timer.tasks.check_and_update_timers',  # Đảm bảo tên đầy đủ
+#         'schedule': crontab(minute='*'),  # Chạy mỗi phút
+#     },
+# }
+CELERY_BEAT_SCHEDULE = {
+    'check-timers-every-5-seconds': {
+        'task': 'timer.tasks.check_and_update_timers',
+        'schedule': schedule(5.0),  # Chạy mỗi 5 giây
+    },
+}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',
+#     },
+# }
 
 
 #############################################################

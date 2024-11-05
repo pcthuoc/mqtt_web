@@ -303,61 +303,69 @@
 {% endblock stylesheets %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Quản Lý Thiết Bị</h2>
-        <button type="button" class="btn btn-primary" id="open-device-modal">Thêm Thiết Bị</button>
-    </div>
 
-    <!-- Dropdown chọn người dùng -->
-    <div class="mb-3">
-        <label for="user-select" class="form-label">Chọn Người Dùng</label>
-        <select id="user-select" class="form-select">
-            <option value="">Tất cả người dùng</option>
-            {% for api_key in all_api_keys %}
-            <option value="{{ api_key.user.id }}">{{ api_key.user.username }}</option>
-            {% endfor %}
-        </select>
+<div class="col-lg-12 col-md-12">
+    <div class="card">
+        <div class="card-header card-header-warning d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="card-title mb-1">Quản lý thiết bị</h4>
+                <div class="d-flex align-items-center">
+                    <p class="card-category mb-0" style="font-size: 0.9rem; margin-right: 10px;">Lọc theo người dùng:</p>
+                    <select id="user-select" class="form-select form-select-sm" style="width: 140px; padding: 0.25rem 0.5rem;">
+                        <option value="">Tất cả người dùng</option>
+                        {% for api_key in all_api_keys %}
+                        <option value="{{ api_key.user.id }}">{{ api_key.user.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <button type="button" class="btn btn-primary btn-sm" id="open-device-modal">Thêm Thiết Bị</button>     
+        
+        </div>
+        
+        
+        <div class="card-body table-responsive">
+            {% if all_devices %}
+                <table class="table table-hover">
+                    <thead class="text-warning">
+                        <tr>
+                            <th>#</th>
+                            <th>Tên Thiết Bị</th>
+                            <th>Pin</th>
+                            <th>Loại</th>
+                            <th>Đơn Vị</th>
+                            <th>Người Dùng</th>
+                            <th>Hành Động</th> <!-- Giữ cột hành động -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for device in all_devices %}
+                        <tr data-user-id="{{ device.user.id }}">
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ device.name }}</td>
+                            <td>{{ device.pin }}</td>
+                            <td>
+                                {% if device.type == 1 %} Relay
+                                {% elif device.type == 2 %} Sensor
+                                {% elif device.type == 3 %} Van
+                                {% endif %}
+                            </td>
+                            <td>{{ device.unit }}</td>
+                            <td>{{ device.user.username }}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm edit-btn" data-id="{{ device.id }}">Sửa</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ device.id }}">Xóa</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-center">Không có thiết bị nào.</p>
+            {% endif %}
+        </div>
     </div>
-
-    <!-- Bảng thiết bị -->
-    <div class="table-responsive">
-        <table id="devices-table" class="table table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Tên Thiết Bị</th>
-                    <th>Pin</th>
-                    <th>Loại</th>
-                    <th>Đơn Vị</th>
-                    <th>Người Dùng</th>
-                    <th>Hành Động</th> <!-- Giữ cột hành động -->
-                </tr>
-            </thead>
-            <tbody>
-                {% for device in all_devices %}
-                <tr data-user-id="{{ device.user.id }}">
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ device.name }}</td>
-                    <td>{{ device.pin }}</td>
-                    <td>
-                        {% if device.type == 1 %} Relay
-                        {% elif device.type == 2 %} Sensor
-                        {% elif device.type == 3 %} Van
-                        {% endif %}
-                    </td>
-                    <td>{{ device.unit }}</td>
-                    <td>{{ device.user.username }}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm edit-btn" data-id="{{ device.id }}">Sửa</button>
-                        <button class="btn btn-danger btn-sm delete-btn" data-id="{{ device.id }}">Xóa</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
 </div>
 
 <!-- Modal Thêm/Sửa Thiết Bị -->

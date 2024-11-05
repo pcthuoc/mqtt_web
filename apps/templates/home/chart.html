@@ -1,0 +1,174 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+<div class="pc-container">
+    <div class="pcoded-content">
+        <div class="row">
+            <!-- Biểu đồ V0 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Dữ liệu V0</h5>
+                        <div>
+                            <button onclick="loadData('1h', '#area-chart-v0')">1 giờ</button> |
+                            <button onclick="loadData('6h', '#area-chart-v0')">6 giờ</button> |
+                            <button onclick="loadData('12h', '#area-chart-v0')">12 giờ</button> |
+                            <button onclick="loadData('1d', '#area-chart-v0')">1 Ngày</button> |
+                            <button onclick="loadData('7d', '#area-chart-v0')">7 Ngày</button> |
+                            <button onclick="loadData('14d', '#area-chart-v0')">14 Ngày</button> |
+                            <button onclick="loadData('30d', '#area-chart-v0')">30 Ngày</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="area-chart-v0"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biểu đồ V1 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Dữ liệu V1</h5>
+                        <div>
+                            <button onclick="loadData('1h', '#area-chart-v1')">1 giờ</button> |
+                            <button onclick="loadData('6h', '#area-chart-v1')">6 giờ</button> |
+                            <button onclick="loadData('12h', '#area-chart-v1')">12 giờ</button> |
+                            <button onclick="loadData('1d', '#area-chart-v1')">1 Ngày</button> |
+                            <button onclick="loadData('7d', '#area-chart-v1')">7 Ngày</button> |
+                            <button onclick="loadData('14d', '#area-chart-v1')">14 Ngày</button> |
+                            <button onclick="loadData('30d', '#area-chart-v1')">30 Ngày</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="area-chart-v1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biểu đồ V2 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Dữ liệu V2</h5>
+                        <div>
+                            <button onclick="loadData('1h', '#area-chart-v2')">1 giờ</button> |
+                            <button onclick="loadData('6h', '#area-chart-v2')">6 giờ</button> |
+                            <button onclick="loadData('12h', '#area-chart-v2')">12 giờ</button> |
+                            <button onclick="loadData('1d', '#area-chart-v2')">1 Ngày</button> |
+                            <button onclick="loadData('7d', '#area-chart-v2')">7 Ngày</button> |
+                            <button onclick="loadData('14d', '#area-chart-v2')">14 Ngày</button> |
+                            <button onclick="loadData('30d', '#area-chart-v2')">30 Ngày</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="area-chart-v2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biểu đồ V3 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Dữ liệu V3</h5>
+                        <div>
+                            <button onclick="loadData('1h', '#area-chart-v3')">1 giờ</button> |
+                            <button onclick="loadData('6h', '#area-chart-v3')">6 giờ</button> |
+                            <button onclick="loadData('12h', '#area-chart-v3')">12 giờ</button> |
+                            <button onclick="loadData('1d', '#area-chart-v3')">1 Ngày</button> |
+                            <button onclick="loadData('7d', '#area-chart-v3')">7 Ngày</button> |
+                            <button onclick="loadData('14d', '#area-chart-v3')">14 Ngày</button> |
+                            <button onclick="loadData('30d', '#area-chart-v3')">30 Ngày</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="area-chart-v3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.28.3/apexcharts.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Khởi tạo biểu đồ ban đầu cho tất cả các cảm biến
+        initializeChart('#area-chart-v0', 'Sensor ' + '{{ sensor0.pin }}', {{ data_list_v0|safe }});
+        initializeChart('#area-chart-v1', 'Sensor ' + '{{ sensor1.pin }}', {{ data_list_v1|safe }});
+        initializeChart('#area-chart-v2', 'Sensor ' + '{{ sensor2.pin }}', {{ data_list_v2|safe }});
+        initializeChart('#area-chart-v3', 'Sensor ' + '{{ sensor3.pin }}', {{ data_list_v3|safe }});
+    });
+
+    // Hàm khởi tạo biểu đồ với dữ liệu mặc định
+    function initializeChart(selector, name, data) {
+        var values = data.map(item => parseFloat(item.value));
+        var dates = data.map(item => item.date);
+
+        var options = {
+            chart: {
+                id: selector.replace('#', ''),  // Đặt ID cho biểu đồ
+                height: 300,
+                type: 'area',
+                zoom: { enabled: true, type: 'x', autoScaleYaxis: true }
+            },
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth' },
+            series: [{ name: name, data: values }],
+            xaxis: {
+                type: 'datetime',
+                categories: dates,
+                labels: { datetimeUTC: false }
+            },
+            tooltip: { x: { format: 'dd/MM/yy HH:mm' } }
+        };
+        var chart = new ApexCharts(document.querySelector(selector), options);
+        chart.render();
+    }
+
+    // Hàm load dữ liệu từ API và cập nhật biểu đồ
+    function loadData(timeframe, selector) {
+        const pin = {
+            '#area-chart-v0': '{{ sensor0.pin }}',
+            '#area-chart-v1': '{{ sensor1.pin }}',
+            '#area-chart-v2': '{{ sensor2.pin }}',
+            '#area-chart-v3': '{{ sensor3.pin }}'
+        }[selector];
+
+        fetch(`/data/${timeframe}/${pin}/`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Data loaded for " + selector + ": ", data);  // Debugging
+                updateChart(data, selector);
+            })
+            .catch(error => console.error('Error loading data:', error));
+    }
+
+    // Hàm cập nhật biểu đồ với dữ liệu mới
+    function updateChart(data, selector) {
+        const chartId = selector.replace('#', '');  // Lấy ID của biểu đồ từ selector
+
+        // Kiểm tra dữ liệu trước khi cập nhật biểu đồ
+        if (data && data.values && data.dates) {
+            ApexCharts.exec(chartId, "updateSeries", [{
+                data: data.values
+            }]);
+            ApexCharts.exec(chartId, "updateOptions", {
+                xaxis: { categories: data.dates }
+            });
+        } else {
+            console.error("Invalid data format for " + selector);
+        }
+    }
+</script>
+
+
+
+
+{% endblock javascripts %}

@@ -10,6 +10,22 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='home'),
+    path('checking/', views.checking, name='checking'),
+
+    path('mqtt_auth', views.mqtt_auth, name='mqtt_auth'),
+    path('mqtt_authorization', views.mqtt_authorization, name='mqtt_authorization'),
+
+    path('timer/', views.timer, name='timer'),
+    path('timer/add/', views.add_edit_timer, name='add_timer'),
+    path('timer/edit/<int:timer_id>/', views.add_edit_timer, name='edit_timer'),
+    path('toggle-timer-status/', views.toggle_timer_status, name='toggle_timer_status'),
+    path('timer/delete/<int:timer_id>/', views.delete_timer, name='delete_timer'),
+
+    path('chart/', views.chart_view, name='chart_view'),
+    path('data/<str:timeframe>/<str:pin>/', views.get_data_by_timeframe_and_pin, name='get_data_by_timeframe_and_pin'),
+
+
+
     path('relays/', views.relays, name='relays'),
     path('device/update-value/<str:vpin>/<str:api_key>/', UpdateDeviceValueByVPINAndAPIKey.as_view(), name='update-device-value-by-vpin-and-apikey'),
     path('sensors/', views.sensors, name='sensors'),

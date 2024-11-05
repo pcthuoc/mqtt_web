@@ -7,6 +7,10 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" />
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=menu" />
 <style>
     .material-symbols-outlined {
         font-variation-settings:
@@ -400,141 +404,61 @@
 {% block javascripts %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
+    // Hàm định dạng thời gian
+    function formatDateTime(dateTimeString) {
+        const date = new Date(dateTimeString);
+        const options = {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        };
+        return date.toLocaleString('vi-VN', options);
+    }
 
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
+    // Kết nối WebSocket
+    const ws = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
 
-        const csrftoken = getCookie('csrftoken');
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("Received data:", data);
 
+        // Cập nhật trạng thái relay
+        const relayElement = document.querySelector(`#relay-${data.id}`);
+        if (relayElement) {
+            const statusElement = relayElement.querySelector('.status');
+            const timeInfoElement = relayElement.querySelector('.time-info');
+            const relayCheckbox = relayElement.querySelector(`#switch-${data.id}`);
 
-        function formatDateTime(dateTimeString) {
-            const date = new Date(dateTimeString);
-            const options = {
-                hour: '2-digit',
-                minute: '2-digit',
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            };
-            return date.toLocaleString('vi-VN', options);
-        }
+            // Cập nhật trạng thái
+            statusElement.textContent = data.new_value == "1" ? 'On' : 'Off';
 
-
-        function toggleRelay(relayId, relayPin, apiKey) {
-            const relayCheckbox = document.getElementById('switch-' + relayId);
-            const value = relayCheckbox.checked ? 1 : 0;
-            const url = `${window.location.protocol}//${window.location.host}/device/update-value/${relayPin}/${apiKey}/`;
-
-            fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken
-                },
-                body: JSON.stringify({ value: value }),
-                credentials: 'same-origin'
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-
-
-
-                    $('#relay-' + relayId).find('.status').text(value === 1 ? 'On' : 'Off');
-
-
-                    $('#relay-' + relayId).find('.time-info').html(`
-      Thời gian bật: ${data.last_on ? formatDateTime(data.last_on) : 'Không có dữ liệu'} <br>
-      Thời gian tắt: ${data.last_off ? formatDateTime(data.last_off) : 'Không có dữ liệu'}
-    `);
-                })
-                .catch(error => {
-                    relayCheckbox.checked = !relayCheckbox.checked;  // Reset công tắc nếu có lỗi
-                });
-        }
-
-
-        $('#relays-container').on('change', '.switch input', function () {
-            const relayId = $(this).attr('id').split('-')[1];
-            const relayPin = $(`#relay-${relayId}`).data('relay-pin');
-            const apiKey = $(`#relay-${relayId}`).data('apikey');
-
-            toggleRelay(relayId, relayPin, apiKey);
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Hàm định dạng thời gian
-        function formatDateTime(dateTimeString) {
-            const date = new Date(dateTimeString);
-            const options = {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            return date.toLocaleString('vi-VN', options);
-        }
-
-
-        // Kết nối WebSocket
-        const ws = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
-
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log("Received data:", data);
-
-            // Cập nhật trạng thái relay
-            const relayElement = document.querySelector(`#relay-${data.id}`);
-            if (relayElement) {
-                const statusElement = relayElement.querySelector('.status');
-                const timeInfoElement = relayElement.querySelector('.time-info');
-                const relayCheckbox = relayElement.querySelector(`#switch-${data.id}`);
-
-                // Cập nhật trạng thái
-                statusElement.textContent = data.new_value == "1" ? 'On' : 'Off';
-
-                // Cập nhật thời gian
-                timeInfoElement.innerHTML = `
+            // Cập nhật thời gian
+            timeInfoElement.innerHTML = `
                 Thời gian bật: ${data.last_on ? formatDateTime(data.last_on) : 'Không có dữ liệu'} <br>
                 Thời gian tắt: ${data.last_off ? formatDateTime(data.last_off) : 'Không có dữ liệu'}
             `;
 
-                // Cập nhật trạng thái của công tắc gạt (toggle switch)
-                relayCheckbox.checked = (data.new_value == "1");
-            }
-        };
+            // Cập nhật trạng thái của công tắc gạt (toggle switch)
+            relayCheckbox.checked = (data.new_value == "1");
+        }
+    };
 
-        ws.onopen = () => {
-            console.log('WebSocket connection established');
-        };
+    ws.onopen = () => {
+        console.log('WebSocket connection established');
+    };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
 
-        ws.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
-    });
+    ws.onclose = () => {
+        console.log('WebSocket connection closed');
+    };
+});
 
 </script>
 {% endblock javascripts %}
+

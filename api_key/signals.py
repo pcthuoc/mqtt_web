@@ -29,18 +29,18 @@ def create_user_api_key(sender, instance, created, **kwargs):
                 "action": "pubsub"        # Quyền truy cập: publish & subscribe
             }
             
-            # Gửi yêu cầu tạo ACL cho API Key trên EMQX
-            response = requests.post(
-                url,
-                json=payload,
-                headers=headers,
-                auth=HTTPBasicAuth(settings.EMQX_API_KEY, settings.EMQX_SECRET_KEY)
-            )
+            # # Gửi yêu cầu tạo ACL cho API Key trên EMQX
+            # response = requests.post(
+            #     url,
+            #     json=payload,
+            #     headers=headers,
+            #     auth=HTTPBasicAuth(settings.EMQX_API_KEY, settings.EMQX_SECRET_KEY)
+            # )
 
-            if response.status_code == 200:
-                logger.info(f"Successfully created API Key and assigned topic for user {instance.username}")
-            else:
-                logger.error(f"Failed to create ACL for API Key {api_key}: {response.content}")
+            # if response.status_code == 200:
+            #     logger.info(f"Successfully created API Key and assigned topic for user {instance.username}")
+            # else:
+            #     logger.error(f"Failed to create ACL for API Key {api_key}: {response.content}")
                 
         except Exception as e:
             logger.error(f"Error creating API Key or setting topic permissions: {str(e)}")
