@@ -46,6 +46,7 @@ def on_message(client, userdata, msg):
         'payload': msg.payload.decode("utf-8"),  # Giải mã ngay tại đây
         'timestamp': timezone.now()
     }
+
  
     message_queue.put(message)  # Đẩy tin nhắn vào hàng đợi
 def publish_message(topic, payload):
@@ -82,7 +83,7 @@ def process_message_queue():
                     pin = topic_type
                     value = data.get("value")
                     event_type = data.get("event_type")
-
+                    
                     if event_type == "client_update":
                         try:
                             # Import models bên trong block xử lý

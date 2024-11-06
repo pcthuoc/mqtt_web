@@ -45,6 +45,8 @@ urlpatterns = [
     path('get_available_pins/<int:user_id>/', views.get_available_pins, name='get_available_pins'),
     path('edit_device/<int:device_id>/', views.edit_device, name='device_edit'),
 
+    path('infor/', views.infor, name='infor'),
+
 
 
 

@@ -90,6 +90,7 @@ def mqtt_authorization(request):
             username = data.get("username")
             topic = data.get("topic")
             action = data.get("action")
+  
 
             # Kiểm tra username và password trong settings
             if username == settings.MQTT_USERNAME:
@@ -647,3 +648,18 @@ def checking(request):
     else:
       
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+def infor(request):
+    # Lấy API key của người dùng hiện tại
+    api_key = get_object_or_404(APIKey, user=request.user).api_key
+    user = request.user
+    # Lọc thiết bị theo user hiện tại
+    devices = Device.objects.filter(user=user)
+    # Lấy danh sách các PIN đang được sử dụng
+    context = {
+        'segment': 'infor',
+        'api_key': api_key,
+        'devices': devices,
+    }
+
+    return render(request, 'home/infor.html', context)

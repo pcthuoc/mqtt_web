@@ -21,11 +21,11 @@ def test_emqx_acl(api_key, topic):
         headers={"Content-Type": "application/json"}
     )
 
-    # Kiểm tra phản hồi từ EMQX
-    if response.status_code == 200:
-        print(f"Successfully set ACL for API Key {api_key} on topic {topic}")
-    else:
-        print(f"Failed to set ACL: {response.status_code} - {response.content}")
+    # # Kiểm tra phản hồi từ EMQX
+    # if response.status_code == 200:
+    #     print(f"Successfully set ACL for API Key {api_key} on topic {topic}")
+    # else:
+    #     print(f"Failed to set ACL: {response.status_code} - {response.content}")
 
 # Gọi hàm để kiểm tra
 test_emqx_acl("your_test_api_key", "API/your_test_api_key")

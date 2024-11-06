@@ -15,13 +15,11 @@ BASE_DIR = Path(__file__).parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = True
 # settings.py
-EMQX_API_KEY = "bff127dc0b5cbe2a"
-EMQX_SECRET_KEY = "NWG9B9A9CLTm8y89CwYIYpFNdYM2NhTYX2LNHIzYaCG77TN"
-MQTT_BROKER_HOST = '165.232.166.11'
-MQTT_BROKER_PORT = 1883  # Cổng TCP
-MQTT_TOPIC = 'API/#'     # Subscribe vào tất cả các topic dưới 'API/'
-MQTT_USERNAME = 'pcthuochh'
-MQTT_PASSWORD = 'thuocadmin'
+MQTT_BROKER_HOST = os.getenv('MQTT_BROKER_HOST', '206.189.94.251')
+MQTT_BROKER_PORT = int(os.getenv('MQTT_BROKER_PORT', 1883))
+MQTT_TOPIC = os.getenv('MQTT_TOPIC', 'API/#')
+MQTT_USERNAME = os.getenv('MQTT_USERNAME', 'pcthuoch')
+MQTT_PASSWORD = os.getenv('MQTT_PASSWORD', 'thuocadmin')
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -60,11 +58,14 @@ INSTALLED_APPS = [
 ]
 
 ASGI_APPLICATION = 'core.asgi.application'
+REDIS_HOST = os.getenv('REDIS_HOST', '0.0.0.0')
+REDIS_PORT = os.getenv('REDIS_PORT', 6379)
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(str(REDIS_HOST), int(REDIS_PORT))]
+
         },
     },
 }
@@ -107,11 +108,15 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('MYSQL_DATABASE', 'dmoj'),
+        'USER': os.getenv('MYSQL_USER', 'dmoj'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'your_password'),
+        'HOST': os.getenv('MYSQL_HOST', 'db'),
+        'PORT': os.getenv('MYSQL_PORT', '3306'),
+        'CONN_MAX_AGE' : None
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -134,13 +139,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # settings.py
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
 
+# Caches settings with django-redis
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": f"redis://{os.environ.get('REDIS_HOST', 'redis')}:{os.environ.get('REDIS_PORT', 6379)}/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -180,18 +186,19 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
-# CELERY_BEAT_SCHEDULE = {
-#     'check-timers-every-minute': {
-#         'task': 'timer.tasks.check_and_update_timers',  # Đảm bảo tên đầy đủ
-#         'schedule': crontab(minute='*'),  # Chạy mỗi phút
-#     },
-# }
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_BEAT_SCHEDULE = {
-    'check-timers-every-5-seconds': {
-        'task': 'timer.tasks.check_and_update_timers',
-        'schedule': schedule(5.0),  # Chạy mỗi 5 giây
+    'check-timers-every-minute': {
+        'task': 'timer.tasks.check_and_update_timers',  # Đảm bảo tên đầy đủ
+        'schedule': crontab(minute='*'),  # Chạy mỗi phút
     },
 }
+# CELERY_BEAT_SCHEDULE = {
+#     'check-timers-every-5-seconds': {
+#         'task': 'timer.tasks.check_and_update_timers',
+#         'schedule': schedule(5.0),  # Chạy mỗi 5 giây
+#     },
+# }
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': False,

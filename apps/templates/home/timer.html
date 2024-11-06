@@ -295,7 +295,7 @@
                 <p class="card-category">Danh sách các hẹn giờ hiện tại</p>
             </div>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#AddTimerModal">
-                Add Timer
+                Thêm
             </button>
 
         </div>
@@ -311,7 +311,7 @@
                             <th>Tắt</th>
                             <th>Lặp lại</th>
                             <th>Trạng thái</th>
-                            <th>Tùy chỉnh</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -351,7 +351,7 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="EditTimerModalLabel{{ timer.id }}">Edit Timer</h5>
+                                        <h5 class="modal-title" id="EditTimerModalLabel{{ timer.id }}">Chỉnh sửa</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
@@ -390,8 +390,8 @@
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary" form="edit-timer-form-{{ timer.id }}">Save Changes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-primary" form="edit-timer-form-{{ timer.id }}">Cập nhật</button>
                                     </div>
                                 </div>
                             </div>
@@ -411,7 +411,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="AddTimerModalLabel">Add Timer</h5>
+                <h5 class="modal-title" id="AddTimerModalLabel">Hẹn giờ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -454,8 +454,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="add-timer-form">Add Timer</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="submit" class="btn btn-primary" form="add-timer-form">Thêm</button>
             </div>
         </div>
     </div>

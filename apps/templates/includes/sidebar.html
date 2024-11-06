@@ -39,6 +39,13 @@
           <p>Hẹn giờ</p>
         </a>
       </li>
+      <li class="nav-item {% if 'infor' in segment %} active {% endif %}">
+        <a class="nav-link" href="/infor">
+          <i class="material-icons">person</i>
+          <p>Thông Tin</p>
+        </a>
+      </li>
+      {% if request.user.is_staff %}
       <li class="nav-item {% if 'user' in segment %} active {% endif %}">
         <a class="nav-link" href="/users">
           <i class="material-symbols-outlined">contacts</i>
@@ -52,6 +59,7 @@
           <p>Quản lý thiết bị</p>
         </a>
       </li>
+      {% endif %}
       <!-- <li class="nav-item {% if 'page-user' in segment %} active {% endif %}">
         <a class="nav-link" href="/page-user.html">
           <i class="material-icons">person</i>
@@ -99,7 +107,7 @@
       <li class="nav-item ">
         <a class="nav-link" href="{% url 'logout' %}">
           <i class="material-icons">directions_run</i>
-          <p>Logout</p>
+          <p>Đăng xuất</p>
         </a>
       </li>
 

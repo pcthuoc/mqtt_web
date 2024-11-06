@@ -299,7 +299,7 @@
              
             </div>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#AddUserModal">
-                Add User
+                Thêm
             </button>
         </div>
         
@@ -308,11 +308,11 @@
                 <table class="table table-hover">
                     <thead class="text-warning">
                         <tr>
-                            <th>ID</th>
-                            <th>Username</th>
+                            <th>STT</th>
+                            <th>Tên đăng nhập</th>
                             <th>Email</th>
                             <th>Key</th>
-                            <th>Actions</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -337,7 +337,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4">No users available.</td>
+                            <td colspan="4">>Không có user nào.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -356,14 +356,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="AddUserModalLabel">Add User</h5>
+                <h5 class="modal-title" id="AddUserModalLabel">Thêm người dùng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="add-user-form" action="{% url 'create_user' %}" method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username:</label>
+                        <label for="username" class="form-label">Tên đăng nhập:</label>
                         <input type="text" class="form-control" name="username" id="username" required>
                     </div>
                     <div class="mb-3">
@@ -371,19 +371,19 @@
                         <input type="email" class="form-control" name="email" id="email" required>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password:</label>
+                        <label for="password" class="form-label">Mật khẩu:</label>
                         <input type="password" class="form-control" name="password" id="password" required>
                     </div>
                     <div class="mb-3">
-                        <label for="password_confirm" class="form-label">Confirm Password:</label>
+                        <label for="password_confirm" class="form-label">Nhập lại mật khẩu:</label>
                         <input type="password" class="form-control" name="password_confirm" id="password_confirm"
                             required>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="submit-add-user-form">Add User</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="submit-add-user-form">Thêm</button>
             </div>
         </div>
     </div>
@@ -395,7 +395,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="EditPasswordModalLabel">Change Password</h5>
+                <h5 class="modal-title" id="EditPasswordModalLabel">Thay đổi mật khẩu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -403,19 +403,19 @@
                     {% csrf_token %}
                     <input type="hidden" name="user_id" id="edit_user_id">
                     <div class="mb-3">
-                        <label for="new_password" class="form-label">New Password:</label>
+                        <label for="new_password" class="form-label">Nhập mật khẩu:</label>
                         <input type="password" class="form-control" name="new_password" id="new_password" required>
                     </div>
                     <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password:</label>
+                        <label for="confirm_password" class="form-label">Nhập lại mật khẩu:</label>
                         <input type="password" class="form-control" name="confirm_password" id="confirm_password"
                             required>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="submit-password-form">Save Changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đống</button>
+                <button type="button" class="btn btn-primary" id="submit-password-form">Cập nhật</button>
             </div>
         </div>
     </div>
@@ -447,7 +447,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    alert('Password changed successfully.');
+                 
                     location.reload();
                 })
                 .catch(error => console.error('Error:', error));
@@ -467,7 +467,7 @@
                 .then(response => response.json().then(data => ({ status: response.status, data: data })))
                 .then(({ status, data }) => {
                     if (status === 201) {
-                        alert('User added successfully.');
+                    
                         location.reload();
                     } else {
                         let errorMessages = Object.values(data.errors).flat().join('\n');

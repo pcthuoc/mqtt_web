@@ -17,7 +17,7 @@ def create_user_api_key(sender, instance, created, **kwargs):
             # Tạo API Key cho người dùng mới
             api_key_instance = APIKey.objects.create(user=instance)
             api_key = api_key_instance.api_key
-            print(api_key)
+       
             # Đặt tên topic gốc cho người dùng
             user_topic = f"API/{api_key}/#"
             # Gọi API EMQX để cấp quyền cho API Key trên topic

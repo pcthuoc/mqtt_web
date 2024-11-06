@@ -48,7 +48,6 @@
   const ws = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
   ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-       console.log("Received data:", data);  // In ra dữ liệu nhận được
       updateSensor(data.id, data.new_value, data.last_off);
 
   };

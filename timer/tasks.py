@@ -23,14 +23,14 @@ def check_and_update_timers():
     now = timezone.localtime()  # Lấy giờ địa phương
     current_day = now.weekday()  # Thứ hiện tại (0: Thứ Hai, ..., 6: Chủ Nhật)
     current_time = now.time().replace(second=0, microsecond=0)  # Chỉ lấy giờ và phút, bỏ giây và microsecond
-    print(f"Giờ địa phương hiện tại: {current_time}")
+    # print(f"Giờ địa phương hiện tại: {current_time}")
     
     # Dùng cache để lưu bộ lọc Timer
     cache_key = f"active_timers_{current_day}_{current_time.minute}"
     active_timers = cache.get(cache_key)
     
     if active_timers is None:
-        print("Không có cache, truy vấn cơ sở dữ liệu")
+        # print("Không có cache, truy vấn cơ sở dữ liệu")
         # Truy vấn Timer có `start_time` hoặc `end_time` trùng với `current_time`
         active_timers = Timer.objects.filter(
             is_active=True,
@@ -43,17 +43,17 @@ def check_and_update_timers():
     for timer in active_timers:
         # Kiểm tra nếu thứ hiện tại có trong `days_of_week` của Timer
         if str(current_day) in timer.days_of_week:
-            print("Thông tin Timer khớp với ngày và giờ hiện tại:")
+    
             
             # Xác định trạng thái bật/tắt dựa trên thời gian
             if timer.start_time == current_time:
                 timer.device.value = "1"  # Bật thiết bị
                 action = "1"
-                print("bât")
+             
             elif timer.end_time == current_time:
                 timer.device.value = "0"  # Tắt thiết bị
                 action = "0"
-                print("tắt")
+             
             else:
                 continue  # Nếu không trùng start_time hoặc end_time, bỏ qua timer này
             timer.device.save()
