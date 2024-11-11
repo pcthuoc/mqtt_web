@@ -474,8 +474,9 @@ def chart_view(request):
     now = datetime.datetime.now()
 
     # Mặc định lấy dữ liệu cho 7 ngày của mỗi biểu đồ khi trang được tải lần đầu
-    default_days = 7
-    start_date = now - datetime.timedelta(days=default_days)
+    default_days = 3
+
+    start_date = now - datetime.timedelta(hours=default_days)
 
     # Lấy APIKey đối tượng của người dùng hiện tại
     api_key_obj = get_object_or_404(APIKey, user=request.user)
@@ -516,6 +517,7 @@ def chart_view(request):
 
     html_template = loader.get_template('home/chart.html')
     return HttpResponse(html_template.render(context, request))   
+
 def get_data_by_timeframe_and_pin(request, timeframe, pin):
     # Xác định thời gian hiện tại và thời gian bắt đầu dựa trên `timeframe`
     api_key = get_object_or_404(APIKey, user=request.user).api_key
@@ -540,10 +542,10 @@ def get_data_by_timeframe_and_pin(request, timeframe, pin):
     # Lọc dữ liệu chỉ dựa trên `pin` và khoảng thời gian
     data_points = Data.objects.filter(api_key=api_key,pin=pin, date__range=(start_time, end_time)).order_by('date')
 
-    # Chuyển đổi dữ liệu thành JSON
+        # Chuyển đổi dữ liệu thành JSON
     chart_data = {
-        'dates': [data.date.strftime('%Y-%m-%d %H:%M:%S') for data in data_points],
-        'values': [float(data.value) for data in data_points]  
+        'dates': [timezone.localtime(data.date).strftime('%Y-%m-%d %H:%M:%S') for data in data_points],
+        'values': [float(data.value) for data in data_points]
     }
 
     return JsonResponse(chart_data)

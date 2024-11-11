@@ -105,10 +105,10 @@ def process_message_queue():
                                     else:
                                         device.last_on = current_time_utc
                                 else:
-                                    last_update = Data.objects.filter(api_key=api_key, pin=pin).order_by('-date').first()
+                                  #  last_update = Data.objects.filter(api_key=api_key, pin=pin).order_by('-date').first()
                                    
-                                    if not last_update or (current_time_utc - last_update.date).total_seconds() >= 60:
-                                        Data.objects.create(api_key=api_key, pin=pin, name=device.name, value=device.value, date=current_time_utc)
+                                    # if not last_update or (current_time_utc - last_update.date).total_seconds() >= 60:
+                                    Data.objects.create(api_key=api_key, pin=pin, name=device.name, value=device.value, date=current_time_utc)
                                     device.last_off = current_time_utc
 
                                 device.save()
